@@ -296,10 +296,49 @@ class MatchesTestCase(unittest.TestCase):
             self.t["id"],
             m["id"],
             scores_csv="3-2,4-1,2-2",
-            winner_id=m["player1-id"])
+            winner_id=str(m["player1-id"]))
 
         m = yield from self._account.matches.show(self.t["id"], m["id"])
         self.assertEqual(m["state"], "complete")
+
+class AttachmentsTestCase(unittest.TestCase):
+
+    @async_test
+    def setUp(self):
+        self._account = Account(username, api_key)
+        self.t_name = _get_random_name()
+
+        p = {"accept_attachments": "true"}
+        self.t = yield from self._account.tournaments.create(self.t_name, self.t_name, **p)
+        self.p1_name = _get_random_name()
+        self.p1 = yield from self._account.participants.create(self.t["id"], self.p1_name)
+        self.p2_name = _get_random_name()
+        self.p2 = yield from self._account.participants.create(self.t["id"], self.p2_name)
+        yield from self._account.tournaments.start(self.t["id"])
+        ms = yield from self._account.matches.index(self.t["id"])
+        self.m = ms[0]
+        self.a1 = yield from self._account.attachments.create(self.t["id"], self.m["id"], "test_attachment_desc", "", "http://example.com")
+
+    @async_test
+    def tearDown(self):
+        yield from self._account.tournaments.destroy(self.t["id"])
+
+    @async_test
+    def test_index(self):
+        ats = yield from self._account.attachments.index(self.t["id"], self.m["id"])
+        self.assertEqual(len(ats), 1)
+        self.assertEqual(ats[0]["id"], self.a1["id"])
+
+    @async_test
+    def test_show(self):
+        ats = yield from self._account.attachments.index(self.t["id"], self.m["id"], self.a1["id"])
+        self.assertEqual(ats["id"], self.a1["id"])
+
+    @async_test
+    def test_update(self):
+        yield from self._account.attachments.update(self.t["id"], self.m["id"], self.a1["id"], description="new_test_attachment_desc")
+        ats = yield from self._account.attachments.index(self.t["id"], self.m["id"], self.a1["id"])
+        self.assertEqual(p1["description"], "new_test_attachment_desc")
 
 
 if __name__ == "__main__":

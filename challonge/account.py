@@ -7,6 +7,7 @@ import asyncio
 from challonge.tournaments import Tournaments
 from challonge.participants import Participants
 from challonge.matches import Matches
+from challonge.attachments import Attachments
 
 try:
     from xml.etree import cElementTree as ElementTree
@@ -29,6 +30,7 @@ class Account():
         self._tournaments = Tournaments(self)
         self._participants = Participants(self)
         self._matches = Matches(self)
+        self._attachments = Attachments(self)
         self._loop = loop or asyncio.get_event_loop()
         self._session = aiohttp.ClientSession(loop=self._loop)
         self.timeout = timeout
@@ -47,6 +49,10 @@ class Account():
     @property
     def matches(self):
         return self._matches
+
+    @property
+    def attachments(self):
+        return self._attachments
 
     @property
     async def is_valid(self):
