@@ -301,6 +301,7 @@ class MatchesTestCase(unittest.TestCase):
         m = yield from self._account.matches.show(self.t["id"], m["id"])
         self.assertEqual(m["state"], "complete")
 
+
 class AttachmentsTestCase(unittest.TestCase):
 
     @async_test
@@ -331,14 +332,14 @@ class AttachmentsTestCase(unittest.TestCase):
 
     @async_test
     def test_show(self):
-        ats = yield from self._account.attachments.index(self.t["id"], self.m["id"], self.a1["id"])
+        ats = yield from self._account.attachments.show(self.t["id"], self.m["id"], self.a1["id"])
         self.assertEqual(ats["id"], self.a1["id"])
 
     @async_test
     def test_update(self):
         yield from self._account.attachments.update(self.t["id"], self.m["id"], self.a1["id"], description="new_test_attachment_desc")
-        ats = yield from self._account.attachments.index(self.t["id"], self.m["id"], self.a1["id"])
-        self.assertEqual(p1["description"], "new_test_attachment_desc")
+        ats = yield from self._account.attachments.show(self.t["id"], self.m["id"], self.a1["id"])
+        self.assertEqual(ats["description"], "new_test_attachment_desc")
 
 
 if __name__ == "__main__":

@@ -16,7 +16,7 @@ class Attachments():
             "asset": asset,
             "url": url,
             "description": description
-        });
+        })
         return await self._account.fetch_and_parse("POST", self.attachment_url(tournament, match), "match_attachment", **params)
 
     async def show(self, tournament, match, attachment, **params):
@@ -24,8 +24,8 @@ class Attachments():
         return await self._account.fetch_and_parse("GET", self.attachment_url(tournament, match) + "/%s" % attachment, **params)
 
     async def update(self, tournament, match, attachment, **params):
-        """Retrieve a single attachment record created with your account."""
-        return await self._account.fetch_and_parse("PUT", self.attachment_url(tournament, match) + "/%s" % attachment, **params)
+        """Update a single attachment record created with your account."""
+        await self._account.fetch("PUT", self.attachment_url(tournament, match) + "/%s" % attachment, "match_attachment", **params)
 
     async def destroy(self, tournament, match, attachment):
         """Deletes a attachment along with all its associated records.
